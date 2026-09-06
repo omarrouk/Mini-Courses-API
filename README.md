@@ -1,4 +1,4 @@
-# Mini Courses API
+# Mini-Courses-API
 
 Simple Java API for training courses. Uses HttpServer, JDBC, and MySQL.
 
