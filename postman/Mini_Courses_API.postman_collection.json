@@ -1,0 +1,235 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Mini Courses API v1",
+    "description": "Manual verification collection for the Mini Courses API (/api/v1).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "courseId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. List Courses (public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses?page=1&size=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "size", "value": "10" }
+          ]
+        },
+        "description": "Public list endpoint. No ROLE header required."
+      }
+    },
+    {
+      "name": "2. Get Course by ID (USER)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "ROLE", "value": "USER" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/{{courseId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "{{courseId}}"]
+        }
+      }
+    },
+    {
+      "name": "3. Create Course (ADMIN)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const body = pm.response.json();",
+              "  if (body.id) { pm.collectionVariables.set('courseId', String(body.id)); }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "ROLE", "value": "ADMIN" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Java Basics\",\n  \"description\": \"Core Java practice\",\n  \"capacity\": 20\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"]
+        }
+      }
+    },
+    {
+      "name": "4. Update Course (TEACHER)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "ROLE", "value": "TEACHER" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Java Adv\",\n  \"description\": \"Advanced Java topics\",\n  \"capacity\": 25\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/{{courseId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "{{courseId}}"]
+        }
+      }
+    },
+    {
+      "name": "5. Update Course (ADMIN)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "ROLE", "value": "ADMIN" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"SQL Intro\",\n  \"description\": \"Intro to SQL Server\",\n  \"capacity\": 15\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/{{courseId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "{{courseId}}"]
+        }
+      }
+    },
+    {
+      "name": "6. Delete Course (ADMIN)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "ROLE", "value": "ADMIN" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/{{courseId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "{{courseId}}"]
+        }
+      }
+    },
+    {
+      "name": "7. Auth - Missing ROLE (401)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "1"]
+        },
+        "description": "Protected endpoint without ROLE header should return 401."
+      }
+    },
+    {
+      "name": "8. Auth - Forbidden ROLE (403)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "ROLE", "value": "USER" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Hack\",\n  \"description\": \"Should fail\",\n  \"capacity\": 5\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"]
+        },
+        "description": "USER cannot create courses. Expect 403."
+      }
+    },
+    {
+      "name": "9. Validation Error (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "ROLE", "value": "ADMIN" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"\",\n  \"description\": \"Bad request\",\n  \"capacity\": 0\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"]
+        }
+      }
+    },
+    {
+      "name": "10. Invalid Pagination (400)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses?page=0&size=200",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"],
+          "query": [
+            { "key": "page", "value": "0" },
+            { "key": "size", "value": "200" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "11. Not Found (404)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "ROLE", "value": "USER" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses/999999",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses", "999999"]
+        }
+      }
+    },
+    {
+      "name": "12. List Page 2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/courses?page=2&size=5",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "courses"],
+          "query": [
+            { "key": "page", "value": "2" },
+            { "key": "size", "value": "5" }
+          ]
+        },
+        "description": "Use after creating enough courses for at least two pages."
+      }
+    }
+  ]
+}
