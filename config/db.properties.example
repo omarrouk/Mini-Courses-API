@@ -1,0 +1,6 @@
+# MySQL connection settings for Mini Courses API
+# Copy this file to config/db.properties and fill in your values.
+
+db.url=jdbc:mysql://127.0.0.1:3306/mini?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+db.username=root
+db.password=
