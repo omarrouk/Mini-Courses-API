@@ -1,6 +1,4 @@
--- Courses table for Mini Courses API (MySQL)
--- 1) In MySQL Workbench: CREATE DATABASE mini;
--- 2) Double-click schema "mini", then run this script.
+-- courses table for the API
 
 CREATE TABLE IF NOT EXISTS courses (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,

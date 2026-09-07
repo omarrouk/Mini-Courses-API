@@ -12,6 +12,8 @@ I built this to practice:
 ## Project structure
 
 ```
+pom.xml                          # Maven project config (dependencies + build)
+mvnw / mvnw.cmd                  # Maven wrapper (run Maven without installing it)
 config/db.properties.example
 schema.sql
 src/main/java/com/courses/api/
